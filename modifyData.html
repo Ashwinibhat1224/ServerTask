@@ -1,0 +1,151 @@
+<html>
+
+<head>
+    <style>
+        form {
+  margin: 0 auto;
+  width: 500px;
+  /* To see the outline of the form */
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
+
+label {
+  /* To make sure that all labels have the same size and are properly aligned */
+  display: inline-block;
+  width: 90px;
+  text-align: right;
+}
+
+input, textarea {
+  
+  font: 1em sans-serif;
+
+  width: 300px;
+  box-sizing: border-box;
+
+  border: 1px solid #999;
+}
+
+textarea {
+  /* To properly align multiline text fields with their labels */
+  vertical-align: top;
+
+  height: 5em;
+}
+#submit{
+  
+    width:120px;
+}
+#clr{
+    width:120px;
+}
+#back{
+    width:120px;
+}
+
+</style>
+    <script src="jquery-3.3.1.min.js"></script>
+
+</head>
+
+<body>
+    <center>
+        <form>
+            <p><b>Modify User Information</b></p>
+            <div>
+                <label>Name :</label>
+                <input type="text" name="name" id="name"><br><br>
+            </div>
+            <div>
+                <label>Email :</label>
+                <input type="text" name="email" id="email"><br><br>
+            </div>
+
+            <div>
+                <label>Phone no :</label>
+                <input type="text" name="phone" id="phone"><br><br>
+            </div>
+            <div>
+                <label>Address :</label>
+                <textarea rows="5" cols="25" name="address" id="address"></textarea><br><br>
+            </div>
+            <div>
+                <label>Gender :</label>
+                <input type="text" name="gender" id="gender"><br><br>
+            </div>
+            <input type="button" value="UPDATE" id="submit">
+            <input type="reset" value="CANCEL" id="cancel"><br /><br />
+            <input type="button" value="BACK" id="back" onclick="window.location.href='showTable.html'">
+
+        </form>
+    </center>
+
+    <script>
+        $(document).ready(function () {
+
+            var url = window.location.href;
+            var myvar = url.split('?');
+            var id = myvar[1].split("=");
+            var id1 = id[1];
+
+            var url1 = "http://172.104.190.30:7777/api/v1/users/" + id1;
+
+            $.ajax({
+                type: 'GET',
+                url: url1,
+                dataType: "JSON",
+                success: function (response) {
+                    console.log(response);
+                    var data = response.data;
+                    console.log(data.name);
+
+                    $("#name").val(data.name);
+                    $("#email").val(data.email);
+                    $("#phone").val(data.phone);
+                    $("#address").val(data.address);
+                    $("#gender").val((data.gender).toUpperCase());
+                },
+                error: function () {
+                    console.log('Error: ');
+                }
+            });
+
+            $("#cancel").click(function () {
+                window.location.href = "showTable.html";
+            })
+
+            $("#submit").click(function () {
+                var name = $("#name").val();
+                var email = $("#email").val();
+                var phone = $("#phone").val();
+                var address = $("#address").val();
+                var gender = $("#gender").val();
+
+
+                myObj = { "name": name, "email": email, "phone": phone, "address": address, "gender": gender };
+                //console.log(myObj);
+
+                var url2 = "http://172.104.190.30:7777/api/v1/users/" + id1;
+
+                $.ajax({
+                    type: 'PUT',
+                    url: url2,
+                    data: myObj,
+                    dataType: "JSON",
+                    success: function (response) {
+                        console.log(response);
+                        alert("Data Updated Successfully");
+                        window.location.href = "showTable.html";
+                    },
+                    error: function () {
+                        console.log('Error: ');
+                    }
+                });
+            })
+        })   
+    </script>
+</body>
+
+</html>
